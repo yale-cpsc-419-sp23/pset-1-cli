@@ -212,6 +212,7 @@ The specifics of the formatting are up to you, but there are a few guidelines it
     * If the `-c` option is specified, the table must be sorted by classifier names in ascending order
     * Tertiary orderings after all command-line options are exhausted must be applied in the same order as above, skipping those that have already been applied.
 * The program output should never exceed 1000 objects
+    * Below the table, the output must include the number of rows in the table
 * The output of the program, when run with no arguments, must include the first 1000 objects in the database according to the sorting orders specified above
 
 > **Note**: The sorting rules *cascade*; that is, the output of the command 
@@ -290,6 +291,7 @@ Here are the *requirements* for the source code of your solution.
 * The program must communicate with a SQLite database in a file named `lux.sqlite`, organized as described above.
 * The program must use SQL prepared statements for every database query.
     (This protects the database against SQL injection attacks.)
+* Every invocation of the program must use exactly one `cursor` in the database
 
 Here are some *recommendations* for the source code of your solution.
 * Modularize your code extensively so that your “main” function looks something like this:
@@ -499,6 +501,7 @@ There must be at least three files with the following (exact) names in that repo
 * `README.md`
 * `lux.py`
 * `luxdetails.py`
+* `requirements.txt`
 
 Ensure that any additional files needed by your program (such as other Python modules) are in the repository snapshot captured by the release.
 If you have installed external packages, you must also include a file named `requirements.txt` containing the dependencies of your project.
