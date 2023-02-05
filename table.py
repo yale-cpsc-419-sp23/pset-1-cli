@@ -52,7 +52,7 @@ class Table:
     # Default values for some useful constants; these can be overridden at init-time.
     _HEAD_UNDERLINE = "-"
     _COLUMN_SEPARATOR = " "
-    _MAX_WIDTH = 80
+    _MAX_WIDTH = 100
     _PREFORMAT_SEPARATOR = "|"
     _DOTS = "..."
     _DEFAULT_FORMAT = FormatSpec.WRAPPED
@@ -110,7 +110,7 @@ class Table:
             self._format_spec = ([Table._DEFAULT_FORMAT] * len(column_names))
 
         self._max_width = max_width or min(
-            Table._MAX_WIDTH, shutil.get_terminal_size().columns)
+            Table._MAX_WIDTH, shutil.get_terminal_size((Table._MAX_WIDTH, 24)).columns)
         self._preformat_sep = preformat_sep or Table._PREFORMAT_SEPARATOR
         self._dots = dots or Table._DOTS
         self._column_widths = []

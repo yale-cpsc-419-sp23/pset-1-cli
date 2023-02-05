@@ -25,6 +25,32 @@
     * [Late Submissions](#late-submissions)
     * [Grading](#grading)
 
+## Due Friday Feb 24 11:59 PM NHT (New Haven Time)
+
+## Table of Contents
+* [Purpose](#purpose)
+* [Rules](#rules)
+* [Getting Started](#getting-started)
+* [Your Task](#your-task)
+* [The Database](#the-database)
+    * [Database Schema](#database-schema)
+    * [English Description](#english-description)
+* [The `lux.py` Program](#the-luxpy-program)
+* [The `luxdetails.py` Program](#the-luxdetailspy-program)
+* [Source Code Guide](#source-code-guide)
+* [Input Specification](#input-specification)
+* [Error Handling](#error-handling)
+* [Testing](#testing)
+    * [Boundary Testing](#boundary-testing)
+    * [Statement Testing](#statement-testing)
+    * [Test Automation](#test-automation)
+    * [Unit Testing](#unit-testing)
+* [Program Style](#program-style)
+* [Advice](#advice)
+* [Submission](#submission)
+    * [Late Submissions](#late-submissions)
+    * [Grading](#grading)
+
 
 ## Purpose
 The purpose of this assignment is to help you learn or review database programming in Python.
@@ -191,7 +217,7 @@ A nationality has a `descriptor` which is the English word one would use to desc
 Each `place` in the world (at least, those places associated with an object or agent in the YUAG collection) has a corresponding row in the `places` table.
 A place's `label` is the English name used to refer to that place
 A place is typically a town, city, state, or country, but the kind of a place is not identified directly in the database.
-Instead, the `places` table contains a column `part_of` that refers to a *different* place's `id`.
+Instead, the `places` table contains a column `part_of` that refers to a *different* place's `id` (an invariant on the table is that there should be no cycles&mdash;but this is not enforced by the DBMS!).
 The `longitude` and `latitude` columns are the coordinates on Earth of the identified place.
 Column `url` refers to a file (a JSON file) containing additional information about the place.
 
@@ -232,7 +258,8 @@ The output of your program must be contain the following information about each 
 1. A list containing the `name` of each classifier for the object, sorted in ascending order
     * Each classifier must be on its own line
 
-The output must have the appearance of a table, similar to the view produced by the `sqlite3` command-line tool when a query is executed.
+The first line of output must indicate the number of objects shown, such as `"Search produced {count} objects."`.
+Below that, the output must have the appearance of a table, similar to the view produced by the `sqlite3` command-line tool when a query is executed.
 The specifics of the formatting are up to you, but there are a few guidelines it must follow.
 * Each column must have a header row, with the following headers:
     1. "ID"
@@ -243,7 +270,8 @@ The specifics of the formatting are up to you, but there are a few guidelines it
     1. "Classified As"
 * The header row must be visually separated by at least one line
 * Columns of the table must be visually separated by at least 1 character
-* No line of output may be more than 80 characters long
+* No line of output may be more than 100 characters long, or the width of the terminal (whichever is smaller)
+    * Hint: use the `shutil.get_terminal_size()` function to query the size of the terminal
 * The courses in the table must be sorted according to the options provided at the command line.
     * No matter what options are specified at the command line, the primary sort of the table must be in ascending order of object `label`s and the secondary sort must be in ascending order of object `date`s
     * If the `-a` option is specified, the table must be sorted by agent names in ascending order, then by agent parts in ascending order
@@ -251,12 +279,11 @@ The specifics of the formatting are up to you, but there are a few guidelines it
     * If the `-c` option is specified, the table must be sorted by classifier names in ascending order
     * Tertiary orderings after all command-line options are exhausted must be applied in the same order as above, skipping those that have already been applied.
 * The program output should never exceed 1000 objects
-    * Below the table, the output must include the number of rows in the table
 * The output of the program, when run with no arguments, must include the first 1000 objects in the database according to the sorting orders specified above
 
 > **Note**: The sorting rules *cascade*; that is, the output of the command 
 >```
->$ python lux.py -c painting -a leonardo
+>$ python lux.py -c painting -a gogh
 >```
 > must be sorted first by object label/date, then by agent name/part, then by classifier, then by department name.
 <hr />
@@ -326,14 +353,15 @@ Those sections are:
 > It must be displayed verbatim in your output.
 <hr />
 
-> **Note**: As with your output from `lux.py`, the output of `luxdetails.py` must not exceed 80 characters in width.
+> **Note**: As with your output from `lux.py`, the output of `luxdetails.py` must not exceed the smaller of 100 characters or the width of the terminal.
 
 ## Source Code Guide
 Here are the *requirements* for the source code of your solution.
 * The program must communicate with a SQLite database in a file named `lux.sqlite`, organized as described above.
 * The program must use SQL prepared statements for every database query.
     (This protects the database against SQL injection attacks.)
-* Every invocation of the program must use exactly one `cursor` in the database
+* Every invocation of the program must use exactly one `cursor` object
+    * Note that this implies that it must also use exactly one database `connection` object!
 
 Here are some *recommendations* for the source code of your solution.
 * Modularize your code extensively so that your “main” function looks something like this:
@@ -480,7 +508,7 @@ Unit testing will be covered briefly later in the semester; for now, it is suffi
 Your programs must be well styled.
 Generally, by consensus of the Python community, good Python style is defined by the [PEP 8 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/) website.
 
-The Python community has developed a static code analysis tool named `pylint`.
+The Python community has developed a static code analysis tool named `pylint`, installable via `$ pip install pylint`.
 The pylint tool (configured with a `.pylintrc` file) generates a report critiquing the style of given Python code.
 The pylint tool enforces many of the PEP 8 guidelines, and some additional guidelines too.
 In CPSC 419 "good style" is defined by the pylint tool, as configured with the *default settings*.
@@ -534,7 +562,7 @@ The file must contain:
 * (Optionally) Any information that will help us to grade your work in the most favorable light
     * In particular, describe all known bugs and explain why any pylint style warnings you received are unavoidable or why you know better than pylint (a convincing argument may negate some pylint style penalties you accrue)
 
-Your README file must be a plain text file: don’t create your README file using Microsoft Word or any other word processor, although you are encouraged to format it using [markdown](https://www.markdownguide.org/) tags.
+Your README file must be a plain text file: don’t create it using Microsoft Word or any other word processor, although you are encouraged to format it using [markdown](https://www.markdownguide.org/) tags.
 
 Package your assignment files by [creating a release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on GitHub in your assignment repository.
 There must be at least the following files with the following (exact) names in that repository when you submit it:
@@ -550,10 +578,12 @@ Ensure that any additional files needed by your program (such as other Python mo
 > ```
 > $ pip freeze -r requirements.txt
 > ```
+> 
+> Failure to include a `requirements.txt` file if you use third-party packages will result in an automatic 5% penalty and a request that you submit an appropriate `requirements.txt` file to the graders.
 <hr/>
 
-**_Submit your assignment solution to Canvas as a [link to that release](https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases)._**
-<hr/>
+## **_Submit your assignment solution to Canvas as a [link to that release](https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases)._**
+<hr />
 
 As noted above in the [Rules](#rules) section, it must be the case that either you submit all of your team’s files or your teammate submits all of your team’s files.
 (It must not be the case that you submit some of your team’s files and your teammate submits some of your team’s files.)
