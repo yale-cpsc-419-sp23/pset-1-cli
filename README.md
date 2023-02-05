@@ -1,5 +1,30 @@
 # CPSC 419: Command-line Application
-### Due Friday Feb 24 11:59 PM NHT (New Haven Time)
+## Due Friday Feb 24 11:59 PM NHT (New Haven Time)
+
+## Table of Contents
+* [Purpose](#purpose)
+* [Rules](#rules)
+* [Getting Started](#getting-started)
+* [Your Task](#your-task)
+* [The Database](#the-database)
+    * [Database Schema](#database-schema)
+    * [English Description](#english-description)
+* [The `lux.py` Program](#the-luxpy-program)
+* [The `luxdetails.py` Program](#the-luxdetailspy-program)
+* [Source Code Guide](#source-code-guide)
+* [Input Specification](#input-specification)
+* [Error Handling](#error-handling)
+* [Testing](#testing)
+    * [Boundary Testing](#boundary-testing)
+    * [Statement Testing](#statement-testing)
+    * [Test Automation](#test-automation)
+    * [Unit Testing](#unit-testing)
+* [Program Style](#program-style)
+* [Advice](#advice)
+* [Submission](#submission)
+    * [Late Submissions](#late-submissions)
+    * [Grading](#grading)
+
 
 ## Purpose
 The purpose of this assignment is to help you learn or review database programming in Python.
@@ -12,9 +37,13 @@ If you have not found or been assigned a partner by the time you read this, plea
 It must be the case that either you submit all of your team’s files or your teammate submits all of your team’s files.
 (It must not be the case that you submit some of your team’s files and your teammate submits some of your team’s files.)
 Your `README` file and your source code files must contain your name and your teammate’s name.
+See below in the [Submission](#submission) section for details on what and how to submit.
 
 ## Getting Started
-To get started, you must follow the below two steps to successfully set up you group and download the template files.
+> **Note**: this section contains exactly the text on the Canvas assignment, reproduced here only for completeness of this document.
+> Since you made it here, you can safely ignore this section.
+
+To get started, you must follow the steps below to successfully set up you group and download the template files.
 
 1. Register your biweekly pset group on Canvas.
     * You can do this by going to People -> Groups and joining a group named "Biweekly Pset Group #" ([guide](https://guides.instructure.com/m/4212/l/64913-how-do-i-join-a-group-as-a-student)).
@@ -51,6 +80,8 @@ So it will be to your advantage to modularize your code so you easily can replac
 
 ## The Database
 The database is a SQLite database that is stored in a file named `lux.sqlite`.
+
+### Database Schema
 That file is provided as an attachment to this assignment, and its schema is in the image below (also available as an attachment to this assignment in the file `images/lux_database.png`).
 
 ![Schema of Lux Database](images/lux_database.png)
@@ -84,6 +115,9 @@ The database consists of these tables and fields:
 * `places`
     * `id` (primary key)
     * `label`
+    * `part_of`
+    * `longitude`
+    * `latitude`
     * `url`
 
 * `references`
@@ -157,7 +191,9 @@ A nationality has a `descriptor` which is the English word one would use to desc
 Each `place` in the world (at least, those places associated with an object or agent in the YUAG collection) has a corresponding row in the `places` table.
 A place's `label` is the English name used to refer to that place
 A place is typically a town, city, state, or country, but the kind of a place is not identified directly in the database.
-Instead, the `places` table contains a column `url` which refers to a file (probably a `json` file) containing additional information about the place.
+Instead, the `places` table contains a column `part_of` that refers to a *different* place's `id`.
+The `longitude` and `latitude` columns are the coordinates on Earth of the identified place.
+Column `url` refers to a file (a JSON file) containing additional information about the place.
 
 **Your first step must be to familiarize yourself with the database.**
 There are hundreds of thousands of rows in the database.
@@ -183,25 +219,28 @@ usage: lux.py [-h] [-d dep] [-a agt] [-c cls] [-l label]
 ```
 
 > **Hint**: Design your `lux.py` such that it uses the standard Python `argparse` module with the `allow_abbrev=False` option.
-The required help message is the default behavior of that module.
-The help message may differ slightly based on your platform or version; do not worry about that&mdash;we are looking for the default behavior of `argparse`.
+> The required help message is the default behavior of that module.
+> The help message may differ slightly based on your platform or version; do not worry about that&mdash;we are looking for the default behavior of `argparse`.
 
 The output of your program must be contain the following information about each object satisfying the search criteria:
 1. The object's `id`
 1. The object's `label`
+1. A comma-separated list containing the `name` of each agent associated with the object, and the `part` each agent produced in the format `"{name} ({part})"`, sorted in ascending order of the agent's name then in ascending order of the part
 1. The object's `date`
-1. A list containing the `name` of each classifier for the object, each on its own line and sorted in ascending order
-1. A list containing the `name` of each agent associated with the object, and the `part` of the production each agent worked on in the format `"{name} ({part})"`, sorted in ascending order of the agent's name then in ascending order of the part.
-    Each agent's information must be on its own line
+1. A list containing the `name` of each department of which the object is a member
+    * Each department's name must be on its own line
+1. A list containing the `name` of each classifier for the object, sorted in ascending order
+    * Each classifier must be on its own line
 
 The output must have the appearance of a table, similar to the view produced by the `sqlite3` command-line tool when a query is executed.
 The specifics of the formatting are up to you, but there are a few guidelines it must follow.
 * Each column must have a header row, with the following headers:
     1. "ID"
     1. "Label"
-    1. "Date"
-    1. "Classified As"
     1. "Produced By"
+    1. "Date"
+    1. "Member Of"
+    1. "Classified As"
 * The header row must be visually separated by at least one line
 * Columns of the table must be visually separated by at least 1 character
 * No line of output may be more than 80 characters long
@@ -220,10 +259,12 @@ The specifics of the formatting are up to you, but there are a few guidelines it
 >$ python lux.py -c painting -a leonardo
 >```
 > must be sorted first by object label/date, then by agent name/part, then by classifier, then by department name.
+<hr />
 
 > **Note**: Precisely formatting textual output as a table is tedious and in this particular case requires some pretty intricate code.
 > Since the goal of this assignment is to teach you how to interact with a database and not how to write sneaky formatting code, we have provided for your use a module named `table.py` that you may use to format your table output.
 > You do not have to do so, and you may find it easier to "roll your own" or to leverage a third-party package from the Python community.
+<hr />
 
 > **Note**: Each *row* of the displayed table might span multiple *lines* of output if, for example, the object's label is very long or if there are many many agents associated with the object.
 > The provided `table.py` uses the `textwrap` module from the Python standard library to handle this, and it is recommended that you also do so if you choose not to use `table.py`.
@@ -283,6 +324,7 @@ Those sections are:
 
 > **Note**: Some reference contents contain HTML-like content.
 > It must be displayed verbatim in your output.
+<hr />
 
 > **Note**: As with your output from `lux.py`, the output of `luxdetails.py` must not exceed 80 characters in width.
 
@@ -354,24 +396,24 @@ More generally, a corrupted database might be a database that is missing a table
 If the database is corrupted such that the SQLite driver’s execution of a `SELECT` statement throws an exception, then your program could write a descriptive error message&mdash;the one contained within the thrown Exception object&mdash;to its `stderr`.
 
 > **Note**: Good question from a student during a recent semester:
-
+>
 > Suppose the user runs `luxdetails.py` for a particular `id`, the program queries the `productions` table to find the corresponding `agt_id`, and the program then queries the database to fetch the row in the `agents` table with that agent ID.
 > Furthermore, suppose the database is corrupted such that no row with that agent ID exists in the courses table.
 > Should our `luxdetails.py` handle that particular database corruption error?
-
+>
 > **Answer**: No. Generalizing...
-
+>
 > Database management systems can enforce *foreign key* integrity constraints on the databases that they manage.
 > So any DBMS would not allow its databases to contain the kind of violation that the student described. And so client programs would not need to check for such violations.
-
+>
 > That is a very good thing.
 > With a sufficiently rich database, it is very difficult for a client program systematically to check for foreign key integrity constraint violations.
 > And it would be absurdly redundant for every client program to check for such violations.
-
+>
 > All of this is to say that it’s more realistic to compose your `lux.py` and `luxdetails.py` such that they don’t check for foreign key integrity constraint violations.
 > And so it’s fine to compose your programs such that they check for only the kinds of database-related errors that are described in this specification: file-level errors and schema-level errors.
 > The first easily could happen if the `lux.sqlite` file is missing from the working directory.
-The second could happen if, for example, the `lux.sqlite` file is present but empty.
+> The second could happen if, for example, the `lux.sqlite` file is present but empty.
 
 ## Testing
 We’ll take a slightly more systematic approach to software testing techniques in lectures later in the semester.
@@ -478,10 +520,10 @@ The same goes for your `luxdetails.py`.
 
 ## Submission
 Replace this file with a new `README.md` file.
-This file must contain:
-* Your name and netid and your teammate’s name and netid
-* A paragraph describing your contribution, and another paragraph describing your teammate’s contribution.
-    Please be thorough; we are looking for two substantial paragraphs, not a sentence or two
+The file must contain:
+* Your name and netid and your teammate’s name and netid, at the beginning of the file
+* A paragraph describing your contribution, and another paragraph describing your teammate’s contribution
+    * Please be thorough; we are looking for two substantial paragraphs, not a sentence or two
 * A description of whatever help (if any) you received from other people while doing the assignment
 * A description of the sources of information that you used while doing the assignment, that are not direct help from other people
 * An indication of how much time you spent doing the assignment, rounded to the nearest hour
@@ -489,28 +531,29 @@ This file must contain:
     * Did it help you to learn?
     * What did it help you to learn?
     * Do you have any suggestions for improvement? *Etc.*
-* (Optionally) Any information that will help us to grade your work in the most favorable light.
-    In particular, describe all known bugs and explain why any pylint style warnings you received are unavoidable or why you know better than pylint (a convincing argument may negate some pylint style penalties you may accrue)
+* (Optionally) Any information that will help us to grade your work in the most favorable light
+    * In particular, describe all known bugs and explain why any pylint style warnings you received are unavoidable or why you know better than pylint (a convincing argument may negate some pylint style penalties you accrue)
 
-Your README file must be a plain text file.
-Don’t create your README file using Microsoft Word or any other word processor, although it may be formatted using [markdown](https://www.markdownguide.org/).
+Your README file must be a plain text file: don’t create your README file using Microsoft Word or any other word processor, although you are encouraged to format it using [markdown](https://www.markdownguide.org/) tags.
 
 Package your assignment files by [creating a release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository#creating-a-release) on GitHub in your assignment repository.
-There must be at least three files with the following (exact) names in that repository when you submit it:
+There must be at least the following files with the following (exact) names in that repository when you submit it:
 
 * `README.md`
 * `lux.py`
 * `luxdetails.py`
-* `requirements.txt`
 
 Ensure that any additional files needed by your program (such as other Python modules) are in the repository snapshot captured by the release.
-If you have installed external packages, you must also include a file named `requirements.txt` containing the dependencies of your project.
-It can be created from within your virtual environment by running the following command;
-```
-$ pip freeze -r requirements.txt
-```
 
-**Submit your assignment solution to Canvas as a [link to that release](https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases).**
+> **Note**: If you have installed external packages, you must also include a file named `requirements.txt` containing the dependencies of your project.
+> It can be created from your virtual environment by running the following command:
+> ```
+> $ pip freeze -r requirements.txt
+> ```
+<hr/>
+
+**_Submit your assignment solution to Canvas as a [link to that release](https://docs.github.com/en/repositories/releasing-projects-on-github/linking-to-releases)._**
+<hr/>
 
 As noted above in the [Rules](#rules) section, it must be the case that either you submit all of your team’s files or your teammate submits all of your team’s files.
 (It must not be the case that you submit some of your team’s files and your teammate submits some of your team’s files.)
@@ -520,14 +563,15 @@ Please follow the rules on what to submit and how.
 It will be a big help to us if you get the filenames right and submit exactly what’s asked for.
 Thanks.
 
-## Late Submissions
-The deadline for this assignment is 11:59 PM NHT (New Haven Time) on Feb 24, 2023.
+### Late Submissions
+The deadline for this assignment is **11:59 PM NHT (New Haven Time) on Feb 24, 2023**.
 There is a strict 15 minute grace period beyond the deadline, to be used in case of technical or administrative difficulties, and not for putting final touches on your solution.
+(If you can do it in as little as 15 minutes, it probably is insigificant enough not to change your grade.)
 
 Late submissions will receive a 5% deduction for every 12-hour period (or part thereof) after the deadline.
 After 72 hours, the Canvas assignment will close and submissions after that time will not receive any credit.
 
-## Grading
+### Grading
 Your grade will be based upon:
 
 * Correctness, that is, the correctness of your programs as specified by this document.
@@ -538,7 +582,11 @@ Your grade will be based upon:
         Your pylint style grade is your pylint score rounded to the nearest integer (minimum 0).
         For example, if your pylint score is 9.8, then your pylint style grade will be 10; if your pylint score is 7.4, then your pylint style grade will be 7.
 
-If your code fails the tests on some particular functionality, your grader will inspect your code manually to try to assign partial credit for that functionality, which will be given only if there is an obvious "quick fix" (*e.g.*, you have accidentally changed the name of teh database file and your solution points to a file with a name that does not match the grader's); if no such quick fix exists then no partial credit for that feature will be given.
+If your code fails the tests on some particular functionality, your grader will inspect your code manually to try to assign partial credit for that functionality.
+Partial credit will be given only if there is an *obvious* "quick fix" (*e.g.*, you have accidentally changed the name of the database file and your solution points to a file with a name that does not match the grader's copy of the database); if no such quick fix exists then no partial credit for that feature will be given.
+
+<hr/>
 
 Original copyright &copy; 2021 by Robert M. Dondero, Jr.
+
 Modified &copy; 2023 by Alan Weide
