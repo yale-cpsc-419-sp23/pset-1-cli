@@ -294,8 +294,9 @@ The specifics of the formatting are up to you, but there are a few guidelines it
 > You do not have to do so, and you may find it easier to "roll your own" or to leverage a third-party package from the Python community.
 <hr />
 
-> **Note**: Each *row* of the displayed table might span multiple *lines* of output if, for example, the object's label is very long or if there are many many agents associated with the object.
+> **Note**: Each *row* of the displayed table might span multiple *lines* of output if, for example, the object's label is very long or if there are many agents associated with the object.
 > The provided `table.py` uses the `textwrap` module from the Python standard library to handle this, and it is recommended that you also do so if you choose not to use `table.py`.
+> If there is a row of the table that spans multiple lines of output, every line break in that row must occur at a word boundary, and never in the middle of a word.
 
 The program must accept any combination of the `-d`, `-a`, `-c`, and `-l` arguments (each appearing at most one time).
 Their meaning is as follows:
@@ -312,9 +313,7 @@ Filters must include leading and trailing whitespace, that is, the argument `-l 
 
 > **Note**: Separate words on the command line are interpreted as separate command-line arguments, *not* single multi-word arguments unless they are surrounded by quotes.
 The argument list `-a van gogh -c painting` is invalid and your program does not need to handle it.
-On the other hand, the argument list `-a 'van gogh' -c painting` *is* valid and your program must filter objects having agent names that contain "van gogh".
-
-If there is a row of the table that spans multiple lines of output, every line break in that row must occur at a word boundary, and never in the middle of a word.
+On the other hand, the argument list `-a 'van gogh' -c painting` *is* valid and your program must filter objects having agent names that contain "van gogh" and classifier containing "painting".
 
 ## The `luxdetails.py` Program
 
@@ -340,7 +339,7 @@ The output of your `luxdetails.py` program must be divided into several sections
 The header for a section must be on its own line
 Those sections are:
 * A section with header "Label", containing the object's label
-* A section with header "Produced By", containing a table with details of all agents that produced this object
+* A section with header "Produced By", containing a table with details of all agents that produced this object.
     The table must have the following column headers and content:
     * "Part", containing the part of the production carried out by each agent
     * "Name", containing the name of each agent
@@ -354,7 +353,7 @@ Those sections are:
 > It must be displayed verbatim in your output.
 <hr />
 
-> **Note**: As with your output from `lux.py`, the output of `luxdetails.py` must not exceed the smaller of 100 characters or the width of the terminal.
+> **Note**: As with your output from `lux.py`, the width of the output of `luxdetails.py` must not exceed the smaller of 100 characters or the width of the terminal.
 
 ## Source Code Guide
 Here are the *requirements* for the source code of your solution.
@@ -365,6 +364,7 @@ Here are the *requirements* for the source code of your solution.
     * Note that this implies that it must also use exactly one database `connection` object!
 
 Here are some *recommendations* for the source code of your solution.
+They are examples of good style that your program will be partly graded on.
 * Modularize your code extensively so that your “main” function looks something like this:
 ```python
 def main():
@@ -375,7 +375,7 @@ def main():
 * Encapsulate database code and print statements inside modules that can be replaced if you decide to display courses in a different fashion or retrieve the data from a different source.
 
 ## Input Specification
-You may assume the users of your `lux.py` and `luxdetails.py` programs are acting “in good faith”, that is, they will not intentionally provide input to your program that is corrupted, unusable, or otherwise incorrect. In particular, you may assume...
+You may assume the users of your `lux.py` and `luxdetails.py` programs are acting “in good faith”. In particular, you may assume...
 
 * The user will only ever provide arguments at the command line that conform to the allowed arguments:
     * The only provided arguments will be `-h`, `-d dept`, `-a agent`, `-c cls`, and `-t title` for `lux.py`
@@ -601,6 +601,8 @@ There is a strict 15 minute grace period beyond the deadline, to be used in case
 
 Late submissions will receive a 5% deduction for every 12-hour period (or part thereof) after the deadline.
 After 72 hours, the Canvas assignment will close and submissions after that time will not receive any credit.
+
+Except for submissions after the 72-hour deadline, the timestamp on the commit associated with the linked release will determine what late penalties, if any, are applied.
 
 ### Grading
 Your grade will be based upon:
