@@ -72,7 +72,7 @@ See below in the [Submission](#submission) section for details on what and how t
 To get started, you must follow the steps below to successfully set up you group and download the template files.
 
 1. Register your biweekly pset group on Canvas.
-    * You can do this by going to People -> Groups and joining a group named "Biweekly Pset Group #" ([guide](https://guides.instructure.com/m/4212/l/64913-how-do-i-join-a-group-as-a-student)).
+    * You can do this by going to People -> Groups and joining a group named "Pset Partner Group #" ([guide](https://guides.instructure.com/m/4212/l/64913-how-do-i-join-a-group-as-a-student)).
         * Make sure that both you and your partner are in the same group!
         * **Even if you work alone, sign up to a group.**
     * This step links your group to the canvas assignment.
@@ -90,7 +90,7 @@ To get started, you must follow the steps below to successfully set up you group
     > **Important**: Do not track `lux.sqlite` in your git repository.
     > It is too large to be hosted on GitHub and recovering from an error telling you that is challenging at best.
     > The included `.gitignore` file in the template repository will help with this, so *do not change or remove* that file.
-    > You may keep the database file in the same folder, but you must be careful not to *track* it.
+    > You may keep the database file in the repository folder, but you must be careful not to *track* it.
 
 ## Your Task
 Any museum must maintain data about objects and artwork they have in their collection.
