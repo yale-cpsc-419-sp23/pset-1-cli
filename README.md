@@ -78,11 +78,12 @@ To get started, you must follow the steps below to successfully set up you group
     * This step links your group to the canvas assignment.
     * Once this step is finished, only one of you will submit the assignment!
 
-1. Accept this GitHub classroom assignment.
+1. Accept [this GitHub classroom assignment](https://classroom.github.com/a/By2y-7Jy).
     * GitHub classroom will yet again ask you to create a team, whether you will be working in pairs or individually.
         * **Name this team identically to your Canvas group**, *e.g.* "Pset Partner Group 13".
     * Let your other team member join your team.
     * This step creates a GitHub repository for your team and links your team members' GitHub ids.
+        * If you do not have a GitHub account, you are required to create one for this course
     * Use this git repository to track your assignment development.
 
 1. Download the `lux.sqlite` database file from Canvas and place it in your new repository folder.
